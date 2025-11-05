@@ -4,46 +4,52 @@
   <div class="row justify-content-center">
     <div class="col-md-8">
       <!-- Main Card -->
-      <div class="card shadow-sm">
+      <div class="card shadow-sm border-0">
         <img 
           src="<%= listing.image %>" 
           class="card-img-top" 
           alt="<%= listing.title %>"
           style="height: 400px; object-fit: cover;"
         >
-        <div class="card-body">
-          <h3 class="card-title mb-3"><%= listing.title %></h3>
+        <div class="card-body p-4">
+          <h2 class="card-title mb-3 fw-bold"><%= listing.title %></h2>
           
-          <p class="card-text text-muted mb-4">
+          <p class="card-text text-muted mb-4 fs-6">
             <%= listing.description %>
           </p>
           
-          <hr>
+          <hr class="my-4">
           
           <!-- Details Section -->
           <div class="row mb-4">
-            <div class="col-6">
-              <p class="mb-2">
-                <i class="bi bi-tag-fill text-primary"></i>
-                <strong> Price:</strong><br>
-                <span class="fs-4 text-success">
-                  <%= listing.price.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' }) %>
-                </span>
-              </p>
+            <div class="col-md-6 mb-3 mb-md-0">
+              <div class="d-flex align-items-start">
+                <i class="bi bi-tag-fill text-primary fs-5 me-2 mt-1"></i>
+                <div>
+                  <strong class="d-block mb-1">Price</strong>
+                  <span class="fs-3 text-success fw-bold">
+                    <%= listing.price.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' }) %>
+                  </span>
+                </div>
+              </div>
             </div>
-            <div class="col-6">
-              <p class="mb-2">
-                <i class="bi bi-geo-alt-fill text-danger"></i>
-                <strong> Location:</strong><br>
-                <%= listing.location %>, <%= listing.country %>
-              </p>
+            <div class="col-md-6">
+              <div class="d-flex align-items-start">
+                <i class="bi bi-geo-alt-fill text-danger fs-5 me-2 mt-1"></i>
+                <div>
+                  <strong class="d-block mb-1">Location</strong>
+                  <span class="text-muted">
+                    <%= listing.location %>, <%= listing.country %>
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
           
-          <hr>
+          <hr class="my-4">
           
           <!-- Action Buttons -->
-          <div class="d-flex gap-2 mb-2">
+          <div class="d-flex flex-column flex-md-row gap-2 mb-3">
             <a 
               href="/listings" 
               class="btn btn-outline-secondary flex-fill"
@@ -52,31 +58,121 @@
             </a>
             <a 
               href="/listings/<%= listing._id %>/edit" 
-              class="btn btn-warning flex-fill"
+              class="btn btn-warning flex-fill text-white"
             >
               <i class="bi bi-pencil"></i> Edit
             </a>
+            <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE" class="flex-fill m-0">
+              <button 
+                class="btn btn-danger w-100" 
+                onclick="return confirm('Are you sure you want to delete this listing?')"
+              >
+                <i class="bi bi-trash"></i> Delete
+              </button>
+            </form>
           </div>
           
-          <!-- Delete Form -->
-          <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
-            <button class="btn btn-danger w-100" onclick="return confirm('Are you sure you want to delete this listing?')">
-              <i class="bi bi-trash"></i> Delete Listing
+          <!-- Timestamps -->
+          <% if (listing.createdAt) { %>
+            <div class="text-muted text-center small">
+              Posted on <%= new Date(listing.createdAt).toLocaleDateString('en-IE', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              }) %>
+            </div>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Reviews Section -->
+      <div class="card shadow-sm border-0 mt-4">
+        <div class="card-body p-4">
+          <h4 class="mb-4 fw-bold">Leave a Review</h4>
+          <form action="/listings/<%= listing._id %>/reviews" method="POST" novalidate class="needs-validation">
+            <div class="mb-4">
+              <label for="rating" class="form-label fw-semibold">
+                Rating <span class="text-danger">*</span>
+              </label>
+              <div class="d-flex align-items-center gap-3">
+                <input 
+                  type="range" 
+                  class="form-range" 
+                  min="1" 
+                  max="5" 
+                  id="rating" 
+                  name="review[rating]"
+                  value="3"
+                  required
+                >
+                <span id="ratingValue" class="badge bg-primary fs-6" style="min-width: 40px;">3</span>
+              </div>
+              <div class="form-text">Drag to select your rating (1-5 stars)</div>
+            </div>
+
+            <div class="mb-4">
+              <label for="comment" class="form-label fw-semibold">
+                Comment <span class="text-danger">*</span>
+              </label>
+              <textarea 
+                name="review[comment]" 
+                id="comment" 
+                class="form-control" 
+                rows="5"
+                placeholder="Share your experience..."
+                required
+              ></textarea>
+              <div class="invalid-feedback">Please add some comments for review </div>
+              <div class="form-text">Minimum 10 characters</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="bi bi-send-fill"></i> Submit Review
             </button>
           </form>
         </div>
       </div>
-      
-      <!-- Timestamps (if you want to show them) -->
-      <div class="text-muted text-center mt-3 small">
-        <% if (listing.createdAt) { %>
-          Posted on <%= new Date(listing.createdAt).toLocaleDateString('en-IE', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          }) %>
-        <% } %>
-      </div>
+
+      <!-- Existing Reviews Display (Optional) -->
+      <% if (listing.reviews && listing.reviews.length > 0) { %>
+        <div class="card shadow-sm border-0 mt-4">
+          <div class="card-body p-4">
+            <h4 class="mb-4 fw-bold">Reviews (<%= listing.reviews.length %>)</h4>
+            <div class="row">
+              <% for(let review of listing.reviews) { %>
+                <div class="col-12 mb-3">
+                  <div class="card border">
+                    <div class="card-body">
+                      <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                          <% for(let i = 0; i < 5; i++) { %>
+                            <i class="bi bi-star<%= i < review.rating ? '-fill text-warning' : ' text-muted' %>"></i>
+                          <% } %>
+                        </div>
+                        <small class="text-muted">
+                          <%= new Date(review.createdAt).toLocaleDateString('en-IE') %>
+                        </small>
+                      </div>
+                      <p class="mb-0"><%= review.comment %></p>
+                    </div>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      <% } %>
+
     </div>
   </div>
 </div>
+
+<!-- Rating Range Script -->
+<script>
+  const ratingInput = document.getElementById('rating');
+  const ratingValue = document.getElementById('ratingValue');
+  
+  ratingInput.addEventListener('input', function() {
+    ratingValue.textContent = this.value;
+  });
+</script>

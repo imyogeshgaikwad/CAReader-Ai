@@ -1,48 +1,511 @@
-/* body{
-    background-color: rgb(255, 120, 140);
-} */
-
-
-.navbar{
-    height: 5rem;
-    background-color: white;
-
-}
-.fa-compass {
-    color: rgb(226, 29, 29);
-    font-size: 2rem;
-}
-
-.nav-link{
-    color: #222222 !important;
-}
-.f-info-links a {
-    text-decoration: none;
-    color: #222222;
+/* ===================================
+   Custom Color Palette Variables
+   =================================== */
+:root {
+  --hot-pink: #FFAEBC;
+  --tiffany-blue: #A0E7E5;
+  --mint: #B4F8C8;
+  --yellow: #FBE7C6;
+  
+  /* Darker shades for hover effects */
+  --hot-pink-dark: #ff8fa1;
+  --tiffany-blue-dark: #7dd9d6;
+  --mint-dark: #95f0a8;
+  --yellow-dark: #f7d9a8;
+  
+  /* Text colors */
+  --text-dark: #2c3e50;
+  --text-muted: #6c757d;
+  --text-light: #ffffff;
 }
 
-.f-info-links, .f-info-socials, .f-info-brand{
-    width: 100%;
-    display: flex;
-    align-items: center ;
-    justify-content: center;
+/* ===================================
+   Global Styles
+   =================================== */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, var(--yellow) 0%, var(--mint) 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  color: var(--text-dark);
 }
 
-.f-info-links a:hover{
-    text-decoration: underline;
+/* ===================================
+   Navbar Styling
+   =================================== */
+.navbar {
+  background: linear-gradient(90deg, var(--tiffany-blue) 0%, var(--hot-pink) 100%) !important;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  padding: 1rem 0;
 }
 
-.f-info-socials i{
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--text-light) !important;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-nav .nav-link {
+  color: var(--text-light) !important;
+  font-weight: 500;
+  margin: 0 0.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.navbar-nav .nav-link:hover {
+  transform: translateY(-2px);
+}
+
+.navbar-nav .nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--text-light);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.navbar-nav .nav-link:hover::after {
+  width: 80%;
+}
+
+/* ===================================
+   Card Styling
+   =================================== */
+.card {
+  border: none;
+  border-radius: 15px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-img-top {
+  transition: all 0.3s ease;
+}
+
+.card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+.card-body {
+  background: linear-gradient(to bottom, white 0%, var(--yellow) 100%);
+}
+
+.card-title {
+  color: var(--text-dark);
+  font-weight: 700;
+}
+
+.card-text {
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ===================================
+   Button Styling
+   =================================== */
+.btn-primary {
+  background: linear-gradient(135deg, var(--tiffany-blue) 0%, var(--hot-pink) 100%);
+  border: none;
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(160, 231, 229, 0.4);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--tiffany-blue-dark) 0%, var(--hot-pink-dark) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(160, 231, 229, 0.5);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--mint) 0%, var(--tiffany-blue) 100%);
+  border: none;
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  border-radius: 25px;
+  color: var(--text-dark);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(180, 248, 200, 0.4);
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, var(--mint-dark) 0%, var(--tiffany-blue-dark) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(180, 248, 200, 0.5);
+  color: var(--text-dark);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, var(--yellow) 0%, var(--hot-pink) 100%);
+  border: none;
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  border-radius: 25px;
+  color: var(--text-dark);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(251, 231, 198, 0.4);
+}
+
+.btn-warning:hover {
+  background: linear-gradient(135deg, var(--yellow-dark) 0%, var(--hot-pink-dark) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(251, 231, 198, 0.5);
+  color: var(--text-dark);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, var(--hot-pink) 0%, #ff6b81 100%);
+  border: none;
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 174, 188, 0.4);
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, var(--hot-pink-dark) 0%, #ff4757 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 174, 188, 0.5);
+}
+
+.btn-outline-secondary {
+  border: 2px solid var(--tiffany-blue);
+  color: var(--tiffany-blue);
+  font-weight: 600;
+  padding: 0.5rem 1.5rem;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-secondary:hover {
+  background: var(--tiffany-blue);
+  border-color: var(--tiffany-blue);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.btn-sm {
+  padding: 0.4rem 1rem;
+  font-size: 0.875rem;
+}
+
+.btn-lg {
+  padding: 0.8rem 2rem;
+  font-size: 1.1rem;
+}
+
+/* ===================================
+   Form Styling
+   =================================== */
+.form-control,
+.form-select {
+  border: 2px solid var(--tiffany-blue);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--hot-pink);
+  box-shadow: 0 0 0 0.2rem rgba(255, 174, 188, 0.25);
+  background: white;
+}
+
+.form-label {
+  color: var(--text-dark);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.form-range {
+  accent-color: var(--hot-pink);
+}
+
+.form-range::-webkit-slider-thumb {
+  background: var(--hot-pink);
+}
+
+.form-range::-moz-range-thumb {
+  background: var(--hot-pink);
+}
+
+.form-text {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.invalid-feedback {
+  color: #dc3545;
+  font-size: 0.875rem;
+}
+
+/* ===================================
+   Badge Styling
+   =================================== */
+.badge {
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+}
+
+.badge.bg-primary {
+  background: linear-gradient(135deg, var(--tiffany-blue) 0%, var(--hot-pink) 100%) !important;
+}
+
+.badge.bg-success {
+  background: var(--mint) !important;
+  color: var(--text-dark);
+}
+
+.badge.bg-warning {
+  background: var(--yellow) !important;
+  color: var(--text-dark);
+}
+
+.badge.bg-secondary {
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%) !important;
+}
+
+/* ===================================
+   Price Styling
+   =================================== */
+.text-success {
+  color: #2ecc71 !important;
+  font-weight: 700;
+}
+
+.fs-3 {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ===================================
+   Icon Styling
+   =================================== */
+.bi {
+  vertical-align: middle;
+}
+
+.text-primary {
+  color: var(--tiffany-blue) !important;
+}
+
+.text-warning {
+  color: #f39c12 !important;
+}
+
+.text-danger {
+  color: var(--hot-pink) !important;
+}
+
+/* ===================================
+   Container & Layout
+   =================================== */
+.container {
+  position: relative;
+  z-index: 1;
+}
+
+.row {
+  margin-bottom: 2rem;
+}
+
+/* ===================================
+   Listing Cards (Index Page)
+   =================================== */
+.listing-card {
+  border-radius: 15px;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  background: white;
+  position: relative;
+}
+
+.listing-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--tiffany-blue) 0%, var(--hot-pink) 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 0;
+}
+
+.listing-card:hover::before {
+  opacity: 0.1;
+}
+
+.listing-card .card-body {
+  position: relative;
+  z-index: 1;
+}
+
+/* ===================================
+   Review Cards
+   =================================== */
+.review-card {
+  border: 2px solid var(--mint);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.review-card:hover {
+  border-color: var(--tiffany-blue);
+  box-shadow: 0 5px 15px rgba(160, 231, 229, 0.3);
+}
+
+/* ===================================
+   Star Rating
+   =================================== */
+.bi-star-fill {
+  color: #f39c12;
+}
+
+.bi-star {
+  color: #dcdcdc;
+}
+
+/* ===================================
+   Horizontal Rules
+   =================================== */
+hr {
+  border: none;
+  height: 2px;
+  background: linear-gradient(90deg, var(--hot-pink) 0%, var(--tiffany-blue) 50%, var(--mint) 100%);
+  opacity: 0.3;
+  margin: 2rem 0;
+}
+
+/* ===================================
+   Shadow Effects
+   =================================== */
+.shadow-sm {
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08) !important;
+}
+
+.shadow {
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ===================================
+   Links
+   =================================== */
+a {
+  color: var(--tiffany-blue);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: var(--hot-pink);
+}
+
+/* ===================================
+   Footer (if you have one)
+   =================================== */
+.footer {
+  background: linear-gradient(90deg, var(--mint) 0%, var(--tiffany-blue) 100%);
+  padding: 2rem 0;
+  margin-top: 4rem;
+  color: var(--text-dark);
+  box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ===================================
+   Animations
+   =================================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card,
+.listing-card {
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* ===================================
+   Responsive Adjustments
+   =================================== */
+@media (max-width: 768px) {
+  .navbar-brand {
     font-size: 1.2rem;
-    margin-right: 1rem;
+  }
+  
+  .card-body {
+    padding: 1rem !important;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
 }
 
-.f-info{
-    text-align: center;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: space-evenly;
-    height:  7rem;
-    background-color:#ebebed ;
+/* ===================================
+   Utility Classes
+   =================================== */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, var(--tiffany-blue) 0%, var(--hot-pink) 100%);
+}
+
+.bg-gradient-success {
+  background: linear-gradient(135deg, var(--mint) 0%, var(--tiffany-blue) 100%);
+}
+
+.bg-gradient-warning {
+  background: linear-gradient(135deg, var(--yellow) 0%, var(--hot-pink) 100%);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--tiffany-blue) 0%, var(--hot-pink) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===================================
+   Page Titles
+   =================================== */
+h1, h2, h3, h4 {
+  color: var(--text-dark);
+  font-weight: 700;
+}
+
+.page-title {
+  background: linear-gradient(135deg, var(--tiffany-blue) 0%, var(--hot-pink) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 2rem;
 }

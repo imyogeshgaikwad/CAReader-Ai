@@ -1,0 +1,186 @@
+<% layout("/layouts/boilerplate") %>
+
+<style>
+    .login-container {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+    }
+    
+    .login-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    .login-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.5px;
+    }
+    
+    .login-subtitle {
+        color: #7f8c8d;
+        font-size: 0.95rem;
+        margin-bottom: 2rem;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #34495e;
+        font-size: 0.9rem;
+        letter-spacing: 0.3px;
+    }
+    
+    .form-control {
+        border: 2px solid #e0e6ed;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.15);
+    }
+    
+    .form-control::placeholder {
+        color: #bdc3c7;
+        font-weight: 400;
+    }
+    
+    .btn-login {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 0.85rem;
+        font-weight: 600;
+        font-size: 1rem;
+        letter-spacing: 0.5px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .btn-login:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .signup-link {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+    
+    .signup-link a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s ease;
+    }
+    
+    .signup-link a:hover {
+        color: #764ba2;
+    }
+    
+    .forgot-password {
+        font-size: 0.85rem;
+        color: #7f8c8d;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+    
+    .forgot-password:hover {
+        color: #667eea;
+    }
+    
+    .invalid-feedback {
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    
+    .form-check-label {
+        font-size: 0.9rem;
+        color: #5a6c7d;
+        font-weight: 500;
+    }
+</style>
+
+<div class="container login-container">
+    <div class="row w-100">
+        <div class="col-md-6 offset-md-3 col-lg-4 offset-lg-4">
+            <div class="card login-card">
+                <div class="card-body p-4 p-md-5">
+                    <h1 class="login-title text-center">Welcome Back</h1>
+                    <p class="login-subtitle text-center">Log in to your CAReader account</p>
+                    
+                    <form action="/login" method="POST" class="needs-validation" novalidate>
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">
+                                Username or Email <span class="text-danger">*</span>
+                            </label>
+                            <input 
+                                id="username" 
+                                name="username" 
+                                type="text"
+                                class="form-control" 
+                                placeholder="Enter your username or email"
+                                required
+                            >
+                            <div class="invalid-feedback">
+                                Please provide your username or email.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                Password <span class="text-danger">*</span>
+                            </label>
+                            <input 
+                                id="password" 
+                                name="password" 
+                                type="password"
+                                class="form-control" 
+                                placeholder="Enter your password"
+                                required
+                                minlength="6"
+                            >
+                            <div class="invalid-feedback">
+                                Please provide your password.
+                            </div>
+                        </div>
+
+                        <div class="mb-3 d-flex justify-content-between align-items-center">
+                            <div class="form-check">
+                                <input 
+                                    class="form-check-input" 
+                                    type="checkbox" 
+                                    id="rememberMe"
+                                    name="rememberMe"
+                                >
+                                <label class="form-check-label" for="rememberMe">
+                                    Remember me
+                                </label>
+                            </div>
+                            <a href="/forgot-password" class="forgot-password">Forgot password?</a>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-login text-white">
+                                Log In
+                            </button>
+                        </div>
+
+                        <div class="text-center signup-link">
+                            Don't have an account? <a href="/signup">Sign up</a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

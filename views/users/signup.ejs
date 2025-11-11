@@ -1,0 +1,173 @@
+<% layout("/layouts/boilerplate") %>
+
+<style>
+    .signup-container {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+    }
+    
+    .signup-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    .signup-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.5px;
+    }
+    
+    .signup-subtitle {
+        color: #7f8c8d;
+        font-size: 0.95rem;
+        margin-bottom: 2rem;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #34495e;
+        font-size: 0.9rem;
+        letter-spacing: 0.3px;
+    }
+    
+    .form-control {
+        border: 2px solid #e0e6ed;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.15);
+    }
+    
+    .form-control::placeholder {
+        color: #bdc3c7;
+        font-weight: 400;
+    }
+    
+    .btn-signup {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 0.85rem;
+        font-weight: 600;
+        font-size: 1rem;
+        letter-spacing: 0.5px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .btn-signup:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .login-link {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+    
+    .login-link a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s ease;
+    }
+    
+    .login-link a:hover {
+        color: #764ba2;
+    }
+    
+    .invalid-feedback {
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+</style>
+
+<div class="container signup-container">
+    <div class="row w-100">
+        <div class="col-md-6 offset-md-3 col-lg-4 offset-lg-4">
+            <div class="card signup-card">
+                <div class="card-body p-4 p-md-5">
+                    <h1 class="signup-title text-center">Create Account</h1>
+                    <p class="signup-subtitle text-center">Join CAReader today</p>
+                    
+                    <form action="/signup" method="POST" class="needs-validation" novalidate>
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">
+                                Username <span class="text-danger">*</span>
+                            </label>
+                            <input 
+                                id="username" 
+                                name="username" 
+                                type="text"
+                                class="form-control" 
+                                placeholder="Choose a username"
+                                required
+                                minlength="3"
+                                maxlength="20"
+                            >
+                            <div class="invalid-feedback">
+                                Please provide a valid username (3-20 characters).
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                Email <span class="text-danger">*</span>
+                            </label>
+                            <input 
+                                id="email" 
+                                name="email" 
+                                type="email"
+                                class="form-control" 
+                                placeholder="your.email@example.com"
+                                required
+                            >
+                            <div class="invalid-feedback">
+                                Please provide a valid email address.
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="password" class="form-label">
+                                Password <span class="text-danger">*</span>
+                            </label>
+                            <input 
+                                id="password" 
+                                name="password" 
+                                type="password"
+                                class="form-control" 
+                                placeholder="Enter a secure password"
+                                required
+                                minlength="6"
+                            >
+                            <div class="invalid-feedback">
+                                Password must be at least 6 characters long.
+                            </div>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-signup text-white">
+                                Sign Up
+                            </button>
+                        </div>
+
+                        <div class="text-center login-link">
+                            Already have an account? <a href="/login">Log in</a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

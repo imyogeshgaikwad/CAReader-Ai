@@ -20,6 +20,10 @@ const reviewSchema = new Schema({
   listing: {
   type: mongoose.Schema.Types.ObjectId,
   ref: "Listing"
+},
+author : {
+  type: Schema.Types.ObjectId,
+  ref: "User",
 }
 
 

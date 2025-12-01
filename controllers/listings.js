@@ -53,7 +53,7 @@ module.exports.showListing = (async (req, res) => {
           req.flash("error", "Listing not found!");
           return res.redirect("/listings");
         }
-    
+        
         res.render("listings/edit.ejs", { listing });
       })
 

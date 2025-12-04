@@ -1,5 +1,67 @@
 <% layout("/layouts/boilerplate") %>
 
+<style>
+  #filters {
+    display: flex;
+    flex-wrap: wrap;
+
+  }
+  .filter{
+    text-align: center;
+    margin-right: 2rem;
+    margin-top: 2rem;
+    opacity: 0.7;
+  }
+  .filter:hover{
+    opacity: 1;
+    cursor: pointer;
+  }
+  .filter{
+    font-size: 0.8rem;
+  }
+</style>
+
+<div id="filters">
+<div class="filter">
+ <div><i class="fa-solid fa-fire"></i> </div>
+ <p>Trending</p>
+</div><div class="filter">
+ <div><i class="fa-solid fa-car"></i></div>
+ <p>Model</p>
+</div>
+<div class="filter">
+ <div><i class="fa-solid fa-comment"></i></i> </div>
+ <p>Recommended</p>
+</div><div class="filter">
+ <div><i class="fa-solid fa-euro-sign"></i></div>
+ <p>Price</p>
+</div>
+<div class="filter">
+ <div><i class="fa-solid fa-thumbs-up"></i> </div>
+ <p>Most Valuable</p>
+</div><div class="filter">
+ <div><i class="fa-solid fa-location-arrow"></i></div>
+ <p>Location</p>
+</div>
+<div class="filter">
+ <div><i class="fa-brands fa-teamspeak"></i></div>
+ <p>Terms</p>
+</div><div class="filter">
+ <div><i class="fa-solid fa-envelope"></i></div>
+ <p>Gmail</p>
+</div>
+<div class="filter">
+ <div><i class="fa-solid fa-address-book"></i></div>
+ <p>Contact</p>
+</div>
+ <div class="tax-toggle form-check-reverse">
+  <div class="form-check form-switch">
+  <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
+  <label class="form-check-label" for="switchCheckDefault">Total after taxes  </label>
+</div>
+ 
+
+</div>
 
 <div class="container mt-4">
   <h3 class="mb-4">All Cars</h3>

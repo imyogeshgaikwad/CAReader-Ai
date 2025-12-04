@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg bg-body-light border-bottom sticky-top shadow-sm">
   <div class="container-fluid">
     <!-- Brand -->
-    <a class="navbar-brand fw-bold" href="/">
+    <a class="navbar-brand fw-bold" href="/listings">
       <i class="fa-solid fa-car text-danger"></i>
       <span class="ms-1">CAREADER</span>
     </a>
@@ -23,19 +23,16 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <!-- Left side: main links -->
       <div class="navbar-nav me-auto">
-        <a class="nav-link" href="/">
-          <i class="fa-solid fa-house"></i> Home
-        </a>
         <a class="nav-link" href="/listings">
-          <i class="fa-solid fa-list"></i> All Cars
-        </a>
-        <a class="nav-link" href="/listings/new">
-          <i class="fa-solid fa-plus-circle"></i> Add New Car
+          <i class="fa-solid fa-list"></i> Explore
         </a>
       </div>
 
       <!-- Right side: auth links -->
       <div class="navbar-nav ms-auto">
+        <a class="nav-link" href="/listings/new">
+          <i class="fa-solid fa-plus-circle"></i> Add Your Car
+        </a>
         <% if (!currUser) { %>
           <a class="nav-link" href="/signup">
             <i class="fa-solid fa-user-plus"></i> Sign Up

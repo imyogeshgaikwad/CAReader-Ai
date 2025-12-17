@@ -1,171 +1,215 @@
 <% layout("/layouts/boilerplate") %>
 
-<div class="container mt-5 mb-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <!-- Card Container -->
-      <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-          <h4 class="mb-0">
-            <i class="fa-solid fa-plus"></i> Add New Car
-          </h4>
+<div class="row mt-3">
+  <div class="col-8 offset-2">
+    <h3>Create a New Listing</h3>
+    <form method="POST" action="/listings" novalidate class="needs-validation" enctype="multipart/form-data">
+      
+      <!-- Title -->
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <div class="input-group">
+          <input 
+            name="listing[title]" 
+            type="text" 
+            placeholder="Add a catchy title" 
+            class="form-control" 
+            required
+          />
+          <button 
+            type="button" 
+            id="generate-titles-btn" 
+            class="btn btn-outline-primary"
+            onclick="generateTitles()"
+            title="Generate AI title suggestions"
+          >
+            ✨ Generate Titles
+          </button>
+        </div>
+        <div class="valid-feedback">Title looks good!</div>
+        <div class="invalid-feedback">Title is required.</div>
+      </div>
+
+      <!-- Description -->
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea 
+          name="listing[description]" 
+          class="form-control" 
+          rows="5"
+          placeholder="Describe your property..."
+          required
+        ></textarea>
+        <div class="btn-group mt-2" role="group">
+          <button 
+            type="button" 
+            id="generate-description-btn" 
+            class="btn btn-sm btn-primary"
+            onclick="generateDescription()"
+            title="Generate AI description"
+          >
+            ✨ Generate Description
+          </button>
+          <button 
+            type="button" 
+            id="enhance-description-btn" 
+            class="btn btn-sm btn-outline-primary"
+            onclick="enhanceDescription()"
+            title="Enhance existing description with AI"
+          >
+            ✨ Enhance Description
+          </button>
+        </div>
+        <div class="valid-feedback">Description looks good!</div>
+        <div class="invalid-feedback">Description is required.</div>
+      </div>
+
+      <!-- Image -->
+      <div class="mb-3">
+        <label for="image" class="form-label">Upload Image</label>
+        <input 
+          name="listing[image]" 
+          type="file" 
+          class="form-control" 
+          accept="image/*"
+          required
+        />
+        <small class="form-text text-muted">
+          🤖 AI will automatically analyze your image and suggest tags & amenities
+        </small>
+        <div class="valid-feedback">Image looks good!</div>
+        <div class="invalid-feedback">Image is required.</div>
+      </div>
+
+      <div class="row">
+        <!-- Price -->
+        <div class="mb-3 col-md-4">
+          <label for="price" class="form-label">Price</label>
+          <div class="input-group">
+            <span class="input-group-text">$</span>
+            <input 
+              name="listing[price]" 
+              type="number" 
+              placeholder="1200" 
+              class="form-control"
+              min="0"
+              required
+            />
+          </div>
+          <button 
+            type="button" 
+            id="predict-price-btn" 
+            class="btn btn-sm btn-warning mt-2 w-100"
+            onclick="predictPrice()"
+            title="Get AI price recommendation"
+          >
+            💰 Get Price Recommendation
+          </button>
+          <div class="valid-feedback">Price looks good!</div>
+          <div class="invalid-feedback">Price is required.</div>
         </div>
 
-        <div class="card-body">
-          <form method="POST" action="/listings" class="needs-validation" novalidate enctype="multipart/form-data">
-            
-            <!-- Title -->
-            <div class="mb-3">
-              <label for="title" class="form-label fw-bold">
-                Title <span class="text-danger">*</span>
-              </label>
-              <input 
-                id="title" 
-                name="listing[title]" 
-                class="form-control" 
-                type="text" 
-                placeholder="e.g., Tesla Model 3"
-                required
-                minlength="3"
-                maxlength="100"
-              >
-              <div class="invalid-feedback">
-                Please enter a title (3-100 characters).
-              </div>
-            </div>
-
-            <!-- Description -->
-            <div class="mb-3">
-              <label for="description" class="form-label fw-bold">
-                Description <span class="text-danger">*</span>
-              </label>
-              <textarea 
-                id="description" 
-                name="listing[description]" 
-                class="form-control" 
-                rows="4"
-                placeholder="Describe the car's features, condition, etc."
-                required
-                minlength="10"
-              ></textarea>
-              <div class="invalid-feedback">
-                Please provide a description (at least 10 characters).
-              </div>
-              <div class="form-text">
-                <span id="charCount">0</span> characters
-              </div>
-            </div>
-
-           
-            <!-- Image Upload -->
-
-            <div class="mb-3">
-              <label for="image" class="form-label fw-bold">
-                Upload Image
-              </label>
-              <input 
-                id="image" 
-                name="listing[image]" 
-                class="form-control" 
-                type="file" 
-                
-                required
-              >
-              <div class="form-text">
-                Optional - Leave for default image
-              </div>
-              <!-- Image Preview -->
-              <div class="mt-3" id="previewContainer" style="display: none;">
-                <label class="form-label fw-bold small text-muted">Preview:</label>
-                <img 
-                  id="imagePreview" 
-                  src="" 
-                  alt="Preview" 
-                  class="img-thumbnail d-block" 
-                  style="max-height: 200px; max-width: 100%;"
-                  
-                >
-                <span 
-                  id="imageError" 
-                  class="badge bg-danger mt-2" 
-                  style="display: none;"
-                >
-                  Invalid Image URL
-                </span>
-              </div>
-            </div>
-
-
-            <!-- Price -->
-            <div class="mb-3">
-              <label for="price" class="form-label fw-bold">
-                Price (€) <span class="text-danger">*</span>
-              </label>
-              <div class="input-group">
-                <span class="input-group-text">€</span>
-                <input 
-                  id="price" 
-                  name="listing[price]" 
-                  class="form-control" 
-                  type="number" 
-                  placeholder="45000"
-                  min="0"
-                  step="1"
-                  required
-                >
-              </div>
-              <div class="invalid-feedback">
-                Please enter a valid price (minimum €0).
-              </div>
-              <div class="form-text" id="priceFormatted"></div>
-            </div>
-
-            <!-- Location & Country -->
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="location" class="form-label fw-bold">
-                  Location <span class="text-danger">*</span>
-                </label>
-                <input 
-                  id="location" 
-                  name="listing[location]" 
-                  class="form-control" 
-                  type="text" 
-                  placeholder="e.g., Dublin"
-                  required
-                >
-                <div class="invalid-feedback">
-                  Please enter a location.
-                </div>
-              </div>
-
-              <div class="col-md-6 mb-3">
-                <label for="country" class="form-label fw-bold">
-                  Country <span class="text-danger">*</span>
-                </label>
-                <input 
-                  id="country" 
-                  name="listing[country]" 
-                  class="form-control" 
-                  type="text" 
-                  placeholder="e.g., Ireland"
-                  required
-                >
-                <div class="invalid-feedback">
-                  Please enter a country.
-                </div>
-              </div>
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit" class="btn btn-primary w-100">
-              <i class="fa-solid fa-plus"></i> Add Car
-            </button>
-
-          </form>
+        <!-- Location -->
+        <div class="mb-3 col-md-8">
+          <label for="location" class="form-label">Location</label>
+          <input 
+            name="listing[location]" 
+            type="text" 
+            placeholder="Jaipur, Rajasthan" 
+            class="form-control"
+            required
+          />
+          <div class="valid-feedback">Location looks good!</div>
+          <div class="invalid-feedback">Location is required.</div>
         </div>
       </div>
-    </div>
+
+      <!-- Country -->
+      <div class="mb-3">
+        <label for="country" class="form-label">Country</label>
+        <input 
+          name="listing[country]" 
+          type="text" 
+          placeholder="India" 
+          class="form-control"
+          required
+        />
+        <div class="valid-feedback">Country looks good!</div>
+        <div class="invalid-feedback">Country is required.</div>
+      </div>
+
+      <!-- Hidden field to track AI-generated content -->
+      <input type="hidden" name="listing[aiGenerated]" id="aiGeneratedFlag" value="false" />
+
+      <!-- AI Info Box -->
+      <div class="alert alert-info" role="alert">
+        <h6 class="alert-heading">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-robot" viewBox="0 0 16 16">
+            <path d="M6 12.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5M3 8.062C3 6.76 4.235 5.765 5.53 5.886a26.6 26.6 0 0 0 4.94 0C11.765 5.765 13 6.76 13 8.062v1.157a.93.93 0 0 1-.765.935c-.845.147-2.34.346-4.235.346s-3.39-.2-4.235-.346A.93.93 0 0 1 3 9.219zm4.542-.827a.25.25 0 0 0-.217.068l-.92.9a25 25 0 0 1-1.871-.183.25.25 0 0 0-.068.495c.55.076 1.232.149 2.02.193a.25.25 0 0 0 .189-.071l.754-.736.847 1.71a.25.25 0 0 0 .404.062l.932-.97a25 25 0 0 0 1.922-.188.25.25 0 0 0-.068-.495c-.538.074-1.207.145-1.98.189a.25.25 0 0 0-.166.076l-.754.785-.842-1.7a.25.25 0 0 0-.182-.135"/>
+            <path d="M8.5 1.866a1 1 0 1 0-1 0V3h-2A4.5 4.5 0 0 0 1 7.5V8a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1v1a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1v-.5A4.5 4.5 0 0 0 10.5 3h-2zM14 7.5V13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7.5A3.5 3.5 0 0 1 5.5 4h5A3.5 3.5 0 0 1 14 7.5"/>
+          </svg>
+          AI-Powered Features Available!
+        </h6>
+        <small>
+          Use our AI tools to:
+          <ul class="mb-0 mt-1">
+            <li>Generate compelling titles and descriptions</li>
+            <li>Get smart pricing recommendations</li>
+            <li>Auto-analyze uploaded images</li>
+          </ul>
+        </small>
+      </div>
+
+      <!-- Submit Button -->
+      <button class="btn btn-dark add-btn">Add Listing</button>
+    </form>
   </div>
 </div>
 
+<script>
+  // Form validation
+  (function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+          form.classList.add('was-validated')
+        }, false)
+      })
+  })()
+
+  // Track when AI generates content
+  function markAsAIGenerated() {
+    document.getElementById('aiGeneratedFlag').value = 'true';
+  }
+
+  // Override AI functions to mark content
+  const originalGenerate = window.generateDescription;
+  window.generateDescription = async function() {
+    await originalGenerate();
+    markAsAIGenerated();
+  };
+</script>
+
+<script src="/js/aiFeatures.js"></script>
+
+<style>
+  .add-btn {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .alert-info {
+    border-left: 4px solid #667eea;
+  }
+</style>

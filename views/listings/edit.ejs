@@ -1,333 +1,237 @@
 <% layout("/layouts/boilerplate") %>
 
-<div class="container mt-5 mb-5">
-  <div class="row justify-content-center">
-    <div class="col-lg-10 col-xl-8">
+<div class="row mt-3">
+  <div class="col-8 offset-2">
+    <h3>Edit Listing</h3>
+    <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" novalidate class="needs-validation" enctype="multipart/form-data">
       
-      <!-- Header -->
-      <div class="text-center mb-5">
-        <h1 class="display-5 fw-bold mb-2">Edit Your Listing</h1>
-        <p class="text-muted fs-5">Update your car details to keep information current</p>
+      <!-- Title -->
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <div class="input-group">
+          <input 
+            name="listing[title]" 
+            type="text" 
+            placeholder="Add a catchy title" 
+            class="form-control" 
+            value="<%= listing.title %>"
+            required
+          />
+          <button 
+            type="button" 
+            id="generate-titles-btn" 
+            class="btn btn-outline-primary"
+            onclick="generateTitles()"
+            title="Generate AI title suggestions"
+          >
+            ✨ Generate Titles
+          </button>
+        </div>
+        <div class="valid-feedback">Title looks good!</div>
+        <div class="invalid-feedback">Title is required.</div>
       </div>
 
-      <!-- Main Edit Form Card -->
-      <div class="card border-0 shadow-lg mb-4" style="border-radius: 20px;">
-        <div class="card-header border-0 text-white p-4" 
-             style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px 20px 0 0;">
-          <h4 class="mb-0 fw-bold">
-            <i class="bi bi-card-checklist me-2"></i>Listing Information
-          </h4>
+      <!-- Description -->
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea 
+          name="listing[description]" 
+          class="form-control" 
+          rows="5"
+          placeholder="Describe your property..."
+          required
+        ><%= listing.description %></textarea>
+        <div class="btn-group mt-2" role="group">
+          <button 
+            type="button" 
+            id="generate-description-btn" 
+            class="btn btn-sm btn-primary"
+            onclick="generateDescription()"
+            title="Generate AI description"
+          >
+            ✨ Generate Description
+          </button>
+          <button 
+            type="button" 
+            id="enhance-description-btn" 
+            class="btn btn-sm btn-outline-primary"
+            onclick="enhanceDescription()"
+            title="Enhance existing description with AI"
+          >
+            ✨ Enhance Description
+          </button>
         </div>
-        
-        <div class="card-body p-4 p-md-5">
-          <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" class="needs-validation" novalidate enctype="multipart/form-data">
-            
-            <!-- Title -->
-            <div class="mb-4">
-              <label for="title" class="form-label fw-bold fs-5 mb-2">
-                <i class="bi bi-type text-primary me-2"></i>Title 
-                <span class="text-danger">*</span>
-              </label>
-              <input id="title" name="listing[title]" class="form-control form-control-lg" 
-                     type="text" value="<%= listing.title %>" placeholder="e.g., Tesla Model 3 Performance"
-                     required minlength="3" maxlength="100" style="border-radius: 12px;">
-              <div class="invalid-feedback">Please enter a title (3-100 characters).</div>
-              <div class="form-text">Make it catchy and descriptive!</div>
-            </div>
+        <% if (listing.aiGenerated && listing.aiGenerated.description) { %>
+          <small class="text-muted d-block mt-1">
+            🤖 AI-generated content (last updated: <%= new Date(listing.aiGenerated.lastUpdated).toLocaleDateString() %>)
+          </small>
+        <% } %>
+        <div class="valid-feedback">Description looks good!</div>
+        <div class="invalid-feedback">Description is required.</div>
+      </div>
 
-            <!-- Description with Character Counter -->
-            <div class="mb-4">
-              <label for="description" class="form-label fw-bold fs-5 mb-2">
-                <i class="bi bi-chat-left-text text-primary me-2"></i>Description 
-                <span class="text-danger">*</span>
-              </label>
-              <textarea id="description" name="listing[description]" class="form-control form-control-lg" 
-                        rows="6" placeholder="Describe the car's features, condition, mileage, service history, etc."
-                        required minlength="10" style="border-radius: 12px; resize: none;"><%= listing.description %></textarea>
-              <div class="invalid-feedback">Please provide a description (at least 10 characters).</div>
-              <div class="d-flex justify-content-between align-items-center mt-2">
-                <div class="form-text">Be detailed to attract more buyers</div>
-                <div class="badge bg-secondary" id="charCount">0 characters</div>
-              </div>
-            </div>
-
-              
-              <!-- Previous Image Preview -->
-            <div class="mb-4">
-                <label class="form-label fw-bold fs-5 mb-2">
-                 <i class="bi bi-image-fill text-warning me-2"></i>Current Car Image
-                </label>
-
-                <div class="d-flex justify-content-center">
-                <div 
-                  class="shadow-sm border rounded-4 overflow-hidden"
-                  style="max-width: 350px; transition: transform 0.2s ease-in-out;"
-                  onmouseover="this.style.transform='scale(1.03)'"
-                  onmouseout="this.style.transform='scale(1)'"
-                      >
-                    <img 
-                    src="<%= listing.image.url %>" 
-                    alt="Current Car Image"
-                    class="img-fluid"
-                    style="width: 100%; height: auto; display: block;"
-                        >
-                  </div>
-             </div>
-
-  <p class="text-muted text-center mt-2">
-    This is the image currently used for the listing.
-  </p>
-</div>
-
-            <!-- Image URL -->
-            <div class="mb-4">
-              <label for="image" class="form-label fw-bold fs-5 mb-2">
-                <i class="bi bi-image text-primary me-2"></i>Upload New Image
-              </label>
-              <input id="image" name="listing[image]" class="form-control form-control-lg"
-                     type="file"placeholder="https://example.com/car-image.jpg"
-                     style="border-radius: 12px;">
-              <div class="form-text mb-3">Optional - Leave blank for default image</div>
-
-
-
-            </div>
-
-            <!-- Price with Visual Formatting -->
-            <div class="mb-4">
-              <label for="price" class="form-label fw-bold fs-5 mb-2">
-                <i class="bi bi-currency-euro text-success me-2"></i>Price 
-                <span class="text-danger">*</span>
-              </label>
-              <div class="input-group input-group-lg" style="border-radius: 12px; overflow: hidden;">
-                <span class="input-group-text bg-success text-white fw-bold" 
-                      style="font-size: 1.2rem; border: none;">€</span>
-                <input id="price" name="listing[price]" class="form-control form-control-lg" 
-                       type="number" value="<%= listing.price %>" placeholder="45000"
-                       min="0" step="1" required style="border: 2px solid #dee2e6;">
-              </div>
-              <div class="invalid-feedback">Please enter a valid price (minimum €0).</div>
+      <!-- Current Image Preview -->
+      <div class="mb-3">
+        <label class="form-label">Current Image</label>
+        <div class="card" style="max-width: 300px;">
+          <img src="<%= originalImageUrl %>" class="card-img-top" alt="Current listing image">
+          <div class="card-body">
+            <% if (listing.aiMetadata && listing.aiMetadata.imageQualityScore) { %>
+              <small class="text-muted">
+                AI Quality Score: <%= listing.aiMetadata.imageQualityScore %>/10
+              </small>
+            <% } %>
+            <% if (listing.aiMetadata && listing.aiMetadata.imageTags && listing.aiMetadata.imageTags.length > 0) { %>
               <div class="mt-2">
-                <span class="badge bg-success bg-opacity-10 text-success px-3 py-2" id="priceFormatted"></span>
-              </div>
-            </div>
-
-            <!-- Location & Country in Gradient Cards -->
-            <div class="row g-3 mb-4">
-              <div class="col-md-6">
-                <label for="location" class="form-label fw-bold fs-5 mb-2">
-                  <i class="bi bi-geo-alt text-danger me-2"></i>Location 
-                  <span class="text-danger">*</span>
-                </label>
-                <input id="location" name="listing[location]" class="form-control form-control-lg" 
-                       type="text" value="<%= listing.location %>" placeholder="e.g., Dublin"
-                       required style="border-radius: 12px;">
-                <div class="invalid-feedback">Please enter a location.</div>
-              </div>
-
-              <div class="col-md-6">
-                <label for="country" class="form-label fw-bold fs-5 mb-2">
-                  <i class="bi bi-flag text-primary me-2"></i>Country 
-                  <span class="text-danger">*</span>
-                </label>
-                <input id="country" name="listing[country]" class="form-control form-control-lg" 
-                       type="text" value="<%= listing.country %>" placeholder="e.g., Ireland"
-                       required style="border-radius: 12px;">
-                <div class="invalid-feedback">Please enter a country.</div>
-              </div>
-            </div>
-
-            <!-- Last Updated Info -->
-            <% if (listing.updatedAt) { %>
-              <div class="alert alert-info border-0 shadow-sm mb-4" style="border-radius: 12px;">
-                <i class="bi bi-clock-history me-2"></i>
-                <strong>Last updated:</strong> 
-                <%= new Date(listing.updatedAt).toLocaleString('en-IE', { 
-                  year: 'numeric', month: 'long', day: 'numeric',
-                  hour: '2-digit', minute: '2-digit'
-                }) %>
+                <small class="text-muted d-block">AI Detected Tags:</small>
+                <div class="d-flex flex-wrap gap-1 mt-1">
+                  <% listing.aiMetadata.imageTags.forEach(tag => { %>
+                    <span class="badge bg-secondary"><%= tag %></span>
+                  <% }) %>
+                </div>
               </div>
             <% } %>
-
-            <!-- Action Buttons -->
-            <div class="d-flex gap-3 flex-wrap">
-              <button type="submit" class="btn btn-lg flex-fill text-white rounded-pill shadow-sm" 
-                      style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-width: 200px;">
-                <i class="bi bi-check-circle me-2"></i>Save Changes
-              </button>
-              <a href="/listings/<%= listing._id %>" 
-                 class="btn btn-outline-secondary btn-lg flex-fill rounded-pill" 
-                 style="min-width: 200px;">
-                <i class="bi bi-x-circle me-2"></i>Cancel
-              </a>
-            </div>
-
-          </form>
-        </div>
-      </div>
-
-      <!-- Danger Zone Card -->
-      <div class="card border-0 shadow-lg" 
-           style="border-radius: 20px; background: linear-gradient(135deg, #ff6b6b15 0%, #ee575715 100%);">
-        <div class="card-body p-4 p-md-5">
-          <div class="d-flex align-items-start gap-3 mb-4">
-            <div class="p-3 bg-danger bg-opacity-10 rounded-circle">
-              <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 2rem;"></i>
-            </div>
-            <div>
-              <h4 class="text-danger fw-bold mb-2">Danger Zone</h4>
-              <p class="text-muted mb-0">
-                Permanently delete this listing. This action is irreversible and will remove all associated data including reviews.
-              </p>
-            </div>
-          </div>
-          
-          <button type="button" class="btn btn-danger btn-lg rounded-pill px-5 shadow-sm" 
-                  data-bs-toggle="modal" data-bs-target="#deleteModal">
-            <i class="bi bi-trash3 me-2"></i>Delete Listing Permanently
-          </button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-      <div class="modal-header border-0 text-white p-4" 
-           style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5757 100%); border-radius: 20px 20px 0 0;">
-        <h5 class="modal-title fw-bold" id="deleteModalLabel">
-          <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirm Deletion
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body p-4">
-        <p class="fs-5 mb-3">Are you absolutely sure you want to delete this listing?</p>
-        <div class="alert alert-warning border-0 shadow-sm" style="border-radius: 12px;">
-          <div class="d-flex align-items-center gap-3">
-            <i class="bi bi-info-circle-fill fs-3"></i>
-            <div>
-              <strong class="d-block mb-1"><%= listing.title %></strong>
-              <small class="text-muted">⚠️ This action cannot be undone!</small>
-            </div>
           </div>
         </div>
       </div>
-      <div class="modal-footer border-0 p-4">
-        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
-          <i class="bi bi-x-circle me-2"></i>Cancel
-        </button>
-        <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE" class="d-inline">
-          <button type="submit" class="btn btn-danger rounded-pill px-4">
-            <i class="bi bi-trash3 me-2"></i>Yes, Delete Forever
-          </button>
-        </form>
+
+      <!-- New Image Upload -->
+      <div class="mb-3">
+        <label for="image" class="form-label">Upload New Image (Optional)</label>
+        <input 
+          name="listing[image]" 
+          type="file" 
+          class="form-control" 
+          accept="image/*"
+        />
+        <small class="form-text text-muted">
+          🤖 AI will automatically analyze new images
+        </small>
       </div>
-    </div>
+
+      <div class="row">
+        <!-- Price -->
+        <div class="mb-3 col-md-4">
+          <label for="price" class="form-label">Price</label>
+          <div class="input-group">
+            <span class="input-group-text">$</span>
+            <input 
+              name="listing[price]" 
+              type="number" 
+              placeholder="1200" 
+              class="form-control"
+              value="<%= listing.price %>"
+              min="0"
+              required
+            />
+          </div>
+          <button 
+            type="button" 
+            id="predict-price-btn" 
+            class="btn btn-sm btn-warning mt-2 w-100"
+            onclick="predictPrice()"
+            title="Get AI price recommendation"
+          >
+            💰 Get Price Recommendation
+          </button>
+          <% if (listing.aiMetadata && listing.aiMetadata.suggestedPrice) { %>
+            <small class="text-muted d-block mt-1">
+              AI Suggested: $<%= listing.aiMetadata.suggestedPrice %>
+            </small>
+          <% } %>
+          <div class="valid-feedback">Price looks good!</div>
+          <div class="invalid-feedback">Price is required.</div>
+        </div>
+
+        <!-- Location -->
+        <div class="mb-3 col-md-8">
+          <label for="location" class="form-label">Location</label>
+          <input 
+            name="listing[location]" 
+            type="text" 
+            placeholder="Jaipur, Rajasthan" 
+            class="form-control"
+            value="<%= listing.location %>"
+            required
+          />
+          <div class="valid-feedback">Location looks good!</div>
+          <div class="invalid-feedback">Location is required.</div>
+        </div>
+      </div>
+
+      <!-- Country -->
+      <div class="mb-3">
+        <label for="country" class="form-label">Country</label>
+        <input 
+          name="listing[country]" 
+          type="text" 
+          placeholder="India" 
+          class="form-control"
+          value="<%= listing.country %>"
+          required
+        />
+        <div class="valid-feedback">Country looks good!</div>
+        <div class="invalid-feedback">Country is required.</div>
+      </div>
+
+      <!-- Hidden field to track AI-generated content -->
+      <input type="hidden" name="listing[aiGenerated]" id="aiGeneratedFlag" value="false" />
+
+      <!-- Submit Button -->
+      <button class="btn btn-dark edit-btn">Update Listing</button>
+    </form>
   </div>
 </div>
 
-<!-- Custom Styles -->
+<script>
+  // Form validation
+  (function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+          form.classList.add('was-validated')
+        }, false)
+      })
+  })()
+
+  // Track when AI generates content
+  function markAsAIGenerated() {
+    document.getElementById('aiGeneratedFlag').value = 'true';
+  }
+
+  // Override AI functions to mark content
+  const originalGenerate = window.generateDescription;
+  window.generateDescription = async function() {
+    await originalGenerate();
+    markAsAIGenerated();
+  };
+</script>
+
+<script src="/js/aiFeatures.js"></script>
+
 <style>
-  .form-control:focus, .form-select:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+  .edit-btn {
+    width: 100%;
+    margin-top: 1rem;
   }
-  
-  .card {
-    transition: transform 0.3s ease;
+
+  .btn-group {
+    display: flex;
+    gap: 0.5rem;
   }
-  
-  input[type="number"]::-webkit-inner-spin-button,
-  input[type="number"]::-webkit-outer-spin-button {
-    opacity: 1;
+
+  .card-img-top {
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .badge {
+    font-size: 0.7rem;
   }
 </style>
-
-<!-- Scripts -->
-<script>
-  // Bootstrap Validation
-  (function() {
-    'use strict';
-    const forms = document.querySelectorAll('.needs-validation');
-    Array.from(forms).forEach(function(form) {
-      form.addEventListener('submit', function(event) {
-        if (!form.checkValidity()) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        form.classList.add('was-validated');
-      }, false);
-    });
-  })();
-
-  // Character Counter for Description
-  const descInput = document.getElementById('description');
-  const charCount = document.getElementById('charCount');
-  
-  function updateCharCount() {
-    const count = descInput.value.length;
-    charCount.textContent = `${count} characters`;
-    charCount.className = count < 10 ? 'badge bg-danger' : 
-                          count < 50 ? 'badge bg-warning' : 'badge bg-success';
-  }
-  
-  descInput.addEventListener('input', updateCharCount);
-  updateCharCount();
-
-  // Price Formatter
-  const priceInput = document.getElementById('price');
-  const priceFormatted = document.getElementById('priceFormatted');
-  
-  function formatPrice() {
-    const value = parseFloat(priceInput.value);
-    if (!isNaN(value) && value >= 0) {
-      priceFormatted.textContent = value.toLocaleString('de-DE', { 
-        style: 'currency', 
-        currency: 'EUR' 
-      });
-      priceFormatted.style.display = 'inline-block';
-    } else {
-      priceFormatted.style.display = 'none';
-    }
-  }
-  
-  priceInput.addEventListener('input', formatPrice);
-  formatPrice();
-
-  // Image Preview with Loading State
-  const imageInput = document.getElementById('image');
-  const imagePreview = document.getElementById('imagePreview');
-  const imageError = document.getElementById('imageError');
-  const imageLoading = document.getElementById('imageLoading');
-  
-  function updateImagePreview() {
-    const url = imageInput.value.trim();
-    
-    if (!url) {
-      imagePreview.src = '<%= listing.image %>';
-      imageError.style.display = 'none';
-      return;
-    }
-    
-    imageLoading.style.display = 'block';
-    imageError.style.display = 'none';
-    
-    const img = new Image();
-    img.onload = function() {
-      imagePreview.src = url;
-      imageLoading.style.display = 'none';
-      imageError.style.display = 'none';
-    };
-    img.onerror = function() {
-      imageLoading.style.display = 'none';
-      imageError.style.display = 'block';
-    };
-    img.src = url;
-  }
-  
-  imageInput.addEventListener('input', updateImagePreview);
-</script>

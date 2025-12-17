@@ -1,32 +1,53 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const reviewSchema = new Schema({
-  rating: {
-    type: Number,
-    required: true,
-    min: [1, "Rating must be at least 1"],
-    max: [5, "Rating cannot be more than 5"]
-  },
   comment: {
     type: String,
-    trim: true,
-    required: [true, "Review comment is required"]
+    required: true
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
+  rating: {
+    type: Number,
+    min: 1,
+    max: 5,
+    required: true
   },
-  listing: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "Listing"
-},
-author : {
-  type: Schema.Types.ObjectId,
-  ref: "User",
-}
-
-
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: "User"
+  },
+  // NEW: AI sentiment analysis fields
+  sentiment: {
+    score: Number,
+    label: {
+      type: String,
+      enum: ['very positive', 'positive', 'neutral', 'negative', 'very negative']
+    },
+    analyzed: {
+      type: Boolean,
+      default: false
+    },
+    analyzedAt: Date
+  },
+  aiAnalysis: {
+    themes: [String],
+    strengths: [String],
+    weaknesses: [String],
+    emotion: String,
+    confidence: Number
+  }
+}, {
+  timestamps: true
 });
 
-module.exports = mongoose.model("Review", reviewSchema);
+// Method to update sentiment
+reviewSchema.methods.updateSentiment = function(sentimentData) {
+  this.sentiment = {
+    ...sentimentData,
+    analyzed: true,
+    analyzedAt: new Date()
+  };
+  return this.save();
+};
+
+module.exports = mongoose.model('Review', reviewSchema);

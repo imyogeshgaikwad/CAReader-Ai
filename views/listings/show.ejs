@@ -1,206 +1,233 @@
 <% layout("/layouts/boilerplate") %>
 
-<script>
-  const mapToken = "<%= process.env.MAP_TOKEN %>";
-  const coordinates = <%- JSON.stringify(listing.geometry.coordinates) %>
+<div class="row mt-3">
+  <div class="col-8 offset-2">
+    <h3><%= listing.title %></h3>
+  </div>
+</div>
 
-  // Fix: Define variables for map.js so VS Code won't warn
-  const listingTitle = "<%= listing.title %>";
-  const listingLocation = "<%= listing.location %>";
-</script>
+<div class="row">
+  <div class="col-8 offset-2">
+    <div class="card listing-card">
+      <img src="<%= listing.image.url %>" class="card-img-top show-img" alt="listing_image" />
+      
+      <!-- AI Image Tags -->
+      <% if (listing.aiMetadata && listing.aiMetadata.imageTags && listing.aiMetadata.imageTags.length > 0) { %>
+        <div class="card-body border-bottom">
+          <small class="text-muted">🤖 AI Detected Features:</small>
+          <div class="d-flex flex-wrap gap-2 mt-2">
+            <% listing.aiMetadata.imageTags.forEach(tag => { %>
+              <span class="badge bg-info"><%= tag %></span>
+            <% }) %>
+          </div>
+        </div>
+      <% } %>
 
-<div class="row container mt-4">
+      <div class="card-body">
+        <p class="card-text"><%= listing.description %></p>
+        
+        <!-- AI Generated Badge -->
+        <% if (listing.aiGenerated && listing.aiGenerated.description) { %>
+          <div class="alert alert-light d-flex align-items-center" role="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-robot me-2" viewBox="0 0 16 16">
+              <path d="M6 12.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5M3 8.062C3 6.76 4.235 5.765 5.53 5.886a26.6 26.6 0 0 0 4.94 0C11.765 5.765 13 6.76 13 8.062v1.157a.93.93 0 0 1-.765.935c-.845.147-2.34.346-4.235.346s-3.39-.2-4.235-.346A.93.93 0 0 1 3 9.219zm4.542-.827a.25.25 0 0 0-.217.068l-.92.9a25 25 0 0 1-1.871-.183.25.25 0 0 0-.068.495c.55.076 1.232.149 2.02.193a.25.25 0 0 0 .189-.071l.754-.736.847 1.71a.25.25 0 0 0 .404.062l.932-.97a25 25 0 0 0 1.922-.188.25.25 0 0 0-.068-.495c-.538.074-1.207.145-1.98.189a.25.25 0 0 0-.166.076l-.754.785-.842-1.7a.25.25 0 0 0-.182-.135"/>
+              <path d="M8.5 1.866a1 1 0 1 0-1 0V3h-2A4.5 4.5 0 0 0 1 7.5V8a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1v1a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1v-.5A4.5 4.5 0 0 0 10.5 3h-2zM14 7.5V13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7.5A3.5 3.5 0 0 1 5.5 4h5A3.5 3.5 0 0 1 14 7.5"/>
+            </svg>
+            <small>This description was enhanced with AI</small>
+          </div>
+        <% } %>
+      </div>
 
-  <div class="mt-4"><!-- FIX: removed nested container error -->
-    <div class="text-center mb-4">
-      <h1 class="display-5 fw-bold"><%= listing.title %></h1>
-      <p class="text-muted"><%= listing.location %>, <%= listing.country %></p>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          <strong>Price:</strong> $<%= listing.price.toLocaleString() %>
+          <% if (listing.aiMetadata && listing.aiMetadata.suggestedPrice) { %>
+            <span class="badge bg-warning ms-2" title="AI suggested price">
+              AI: $<%= listing.aiMetadata.suggestedPrice %>
+            </span>
+          <% } %>
+        </li>
+        <li class="list-group-item"><strong>Location:</strong> <%= listing.location %></li>
+        <li class="list-group-item"><strong>Country:</strong> <%= listing.country %></li>
+        
+        <!-- Rating and Reviews -->
+        <% if (listing.reviews && listing.reviews.length > 0) { %>
+          <li class="list-group-item">
+            <strong>Rating:</strong> 
+            <span class="badge bg-success">
+              ⭐ <%= listing._averageRating || 'N/A' %>
+            </span>
+            <span class="text-muted">(<%= listing.reviews.length %> reviews)</span>
+            
+            <!-- AI Sentiment Score -->
+            <% if (listing.aiMetadata && listing.aiMetadata.sentimentScore) { %>
+              <span class="badge bg-info ms-2" title="AI sentiment analysis">
+                🤖 Sentiment: <%= listing.aiMetadata.sentimentScore > 0 ? 'Positive' : listing.aiMetadata.sentimentScore < 0 ? 'Negative' : 'Neutral' %>
+              </span>
+            <% } %>
+          </li>
+        <% } %>
+      </ul>
+
+      <!-- Owner Actions -->
+      <% if(currUser && listing.owner._id.equals(currUser._id)) { %>
+        <div class="card-body">
+          <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark w-100 mb-2">Edit</a>
+          <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
+            <button class="btn btn-dark w-100">Delete</button>
+          </form>
+        </div>
+      <% } %>
     </div>
+  </div>
 
-    <div class="row justify-content-center">
-      <div class="col-lg-8 col-md-10">
-
-        <div class="col-md-12 mt-4">
-          <div class="card mb-4">
-            <img src="<%= listing.image.url %>" class="card-img-top" alt="<%= listing.title %>">
-
-            <div class="card-body">
-              <div class="d-flex align-items-center mb-3">
-                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2"
-                  style="width: 40px; height: 40px;">
-                  
-                  <!-- FIXED: removed optional chaining -->
-                  <%= listing.owner && listing.owner.username 
-                        ? listing.owner.username.charAt(0).toUpperCase()
-                        : "U" %>
-
-                </div>
-                <div>
-                  <small class="text-muted">Listed By</small>
-                  <div><strong><%= listing.owner?.username %></strong></div>
-                </div>
-              </div>
-
-              <h5 class="card-title"><%= listing.title %></h5>
-              <p class="card-text"><%= listing.description %></p>
-
-              <div class="mb-2">
-                <strong>Price:</strong>
-                <%= listing.price.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' }) %>
-              </div>
-
-              <div class="mb-3">
-                <strong>Location:</strong>
-                <%= listing.location %>, <%= listing.country %>
-              </div>
-
-              <% if (currUser && listing.owner && currUser.id === listing.owner._id.toString()) { %>
-              <div class="d-flex gap-2">
-                <a href="/listings" class="btn btn-secondary">Back to Listings</a>
-                <a href="/listings/<%= listing._id %>/edit" class="btn btn-warning">Edit</a>
-                <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE" class="d-inline">
-                  <button class="btn btn-danger">Delete</button>
-                </form>
-              </div>
-              <% } %>
-
-              <% if (listing.createdAt) { %>
-              <div class="text-muted mt-3">
-                <small>
-                  Posted on
-                  <%= new Date(listing.createdAt).toLocaleDateString('en-IE', { year: 'numeric', month: 'long', day: 'numeric' }) %>
-                </small>
-              </div>
-              <% } %>
-
-            </div>
+  <!-- AI Review Summary Section -->
+  <% if (listing.reviews && listing.reviews.length > 0) { %>
+    <div class="col-8 offset-2 mt-4">
+      <% if (listing.aiMetadata && listing.aiMetadata.reviewSummary) { %>
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+              🤖 AI Review Summary
+            </h5>
           </div>
-
-          <!-- Reviews Section -->
-          <% if (listing.reviews && listing.reviews.length > 0) { %>
-          <div class="card mb-4">
-            <div class="card-body">
-              <h5 class="card-title mb-4">All Reviews (<%= listing.reviews.length %>)</h5>
-
-              <% listing.reviews.forEach((review) => { %>
-              <div class="review-item mb-4 pb-4 border-bottom">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                  <div>
-                    <strong>@<%= review.author.username %></strong>
-
-                    <div class="my-2">
-                      <p class="starability-result" data-rating="<%= review.rating %>">
-                        Rated: <%= review.rating %> stars
-                      </p>
-                    </div>
-
-                    <small class="text-muted">
-                      <%= new Date(review.createdAt).toLocaleDateString('en-IE', { year: 'numeric', month: 'short', day: 'numeric' }) %>
-                    </small>
-                  </div>
-
-                  <% if (currUser && review.author._id.equals(currUser._id)) { %>
-                  <form method="POST"
-                    action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
-                    <button class="btn btn-sm btn-danger">Delete</button>
-                  </form>
-                  <% } %>
-                </div>
-
-                <p class="mb-0"><%= review.comment %></p>
-              </div>
-              <% }) %>
-
-            </div>
+          <div class="card-body">
+            <p class="card-text"><%= listing.aiMetadata.reviewSummary %></p>
+            <small class="text-muted">
+              Generated from <%= listing.reviews.length %> review<%= listing.reviews.length !== 1 ? 's' : '' %>
+            </small>
           </div>
-          <% } %>
+        </div>
+      <% } %>
+    </div>
+  <% } %>
 
-          <!-- Leave a Review Form -->
-          <% if (currUser) { %>
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title mb-4">Leave a Review</h5>
-
-              <form method="POST" action="/listings/<%= listing._id %>/reviews" novalidate class="needs-validation">
-                <div class="mb-3">
-                  <label class="form-label">Rating *</label>
-
-                  <!-- FIXED: added proper labels so VS Code stops warning -->
-                  <fieldset class="starability-slot">
-                    <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0" checked />
-
-                    <input type="radio" id="first-rate1" name="review[rating]" value="1" />
-                    <label for="first-rate1" title="Terrible">1 star</label>
-
-                    <input type="radio" id="first-rate2" name="review[rating]" value="2" />
-                    <label for="first-rate2" title="Not good">2 stars</label>
-
-                    <input type="radio" id="first-rate3" name="review[rating]" value="3" />
-                    <label for="first-rate3" title="Average">3 stars</label>
-
-                    <input type="radio" id="first-rate4" name="review[rating]" value="4" />
-                    <label for="first-rate4" title="Very good">4 stars</label>
-
-                    <input type="radio" id="first-rate5" name="review[rating]" value="5" />
-                    <label for="first-rate5" title="Amazing">5 stars</label>
-
-                    <span class="starability-focus-ring"></span>
-                  </fieldset>
-                </div>
-
-                <div class="mb-3">
-                  <label for="comment" class="form-label">Comment *</label>
-                  <textarea class="form-control" id="comment" name="review[comment]" rows="4" required></textarea>
-                  <div class="invalid-feedback">Please add some comments for your review.</div>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Submit Review</button>
-              </form>
-
-            </div>
-          </div>
-          <% } %>
-
-          <h3 class="mt-3 mb-3 text-dark fw-bold">Where you will be</h3>
-
-          <div class="map-wrapper mb-5">
-            <div id="map"></div>
-          </div>
-
+  <!-- Reviews Section -->
+  <div class="col-8 offset-2 mb-3">
+    <% if(currUser) { %>
+      <hr />
+      <h4>Leave a Review</h4>
+      <form action="/listings/<%= listing._id %>/reviews" method="POST" novalidate class="needs-validation">
+        <div class="mb-3 mt-3">
+          <label for="rating" class="form-label">Rating</label>
+          <fieldset class="starability-slot">
+            <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+            <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+            <label for="first-rate1">1 star</label>
+            <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+            <label for="first-rate2">2 stars</label>
+            <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+            <label for="first-rate3">3 stars</label>
+            <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+            <label for="first-rate4">4 stars</label>
+            <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+            <label for="first-rate5">5 stars</label>
+          </fieldset>
         </div>
 
+        <div class="mb-3">
+          <label for="comment" class="form-label">Comment</label>
+          <textarea name="review[comment]" id="comment" cols="30" rows="5" class="form-control" placeholder="Share your experience..." required></textarea>
+          <small class="form-text text-muted">
+            🤖 AI will analyze the sentiment of your review
+          </small>
+          <div class="invalid-feedback">Please add some comments for review.</div>
+        </div>
+        <button class="btn btn-outline-dark">Submit</button>
+      </form>
+      <hr />
+    <% } %>
+
+    <!-- Display Reviews -->
+    <% if(listing.reviews.length > 0) { %>
+      <div class="row">
+        <p><b>All Reviews</b></p>
+        <% for(review of listing.reviews) { %>
+          <div class="card col-5 ms-3 mb-3">
+            <div class="card-body">
+              <h5 class="card-title">
+                <%= review.author.username %>
+                
+                <!-- AI Sentiment Badge -->
+                <% if (review.sentiment && review.sentiment.analyzed) { %>
+                  <% 
+                    let badgeClass = 'secondary';
+                    if (review.sentiment.label.includes('positive')) badgeClass = 'success';
+                    else if (review.sentiment.label.includes('negative')) badgeClass = 'danger';
+                  %>
+                  <span class="badge bg-<%= badgeClass %> float-end" title="AI Sentiment Analysis">
+                    <%= review.sentiment.label %>
+                  </span>
+                <% } %>
+              </h5>
+              <p class="starability-result" data-rating="<%= review.rating %>"></p>
+              <p class="card-text"><%= review.comment %></p>
+              
+              <!-- AI Analysis Details -->
+              <% if (review.aiAnalysis && review.aiAnalysis.emotion) { %>
+                <small class="text-muted">
+                  🤖 Detected emotion: <strong><%= review.aiAnalysis.emotion %></strong>
+                </small>
+              <% } %>
+            </div>
+            
+            <% if(currUser && review.author._id.equals(currUser._id)) { %>
+              <div class="card-body">
+                <form class="mb-0" method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
+                  <button class="btn btn-sm btn-dark">Delete</button>
+                </form>
+              </div>
+            <% } %>
+          </div>
+        <% } %>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Ask AI Assistant Button -->
+  <div class="col-8 offset-2 mb-5">
+    <div class="card bg-light">
+      <div class="card-body text-center">
+        <h5>Have questions about this property?</h5>
+        <p class="text-muted">Ask our AI travel assistant for more details!</p>
+        <button class="btn btn-primary" onclick="openChatbot('Tell me more about <%= listing.title %> in <%= listing.location %>')">
+          🤖 Ask AI Assistant
+        </button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  // Bootstrap form validation
+  // Form validation
   (function () {
-    "use strict";
-    const forms = document.querySelectorAll(".needs-validation");
-
-    forms.forEach((form) => {
-      form.addEventListener(
-        "submit",
-        (event) => {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
           if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
+            event.preventDefault()
+            event.stopPropagation()
           }
-          form.classList.add("was-validated");
-        },
-        false
-      );
-    });
-  })();
+          form.classList.add('was-validated')
+        }, false)
+      })
+  })()
 </script>
 
 <style>
-  .review-item:last-child {
-    border-bottom: none !important;
-    padding-bottom: 0 !important;
+  .show-img {
+    height: 400px;
+    object-fit: cover;
+  }
+
+  .badge {
+    font-size: 0.8rem;
+  }
+
+  .alert-light {
+    background-color: #f8f9fa;
+    border-left: 3px solid #667eea;
   }
 </style>
-
-<script src="/js/map.js"></script>

@@ -1,38 +1,20 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const Review = require("./review.js");
+const Review = require('./review.js');
 
 const listingSchema = new Schema({
   title: {
     type: String,
     required: true,
-    trim: true,
-    minlength: [3, "Title must be at least 3 characters long"]
   },
-  description: {
-    type: String,
-    required: true,
-    trim: true
-  },
+  description: String,
   image: {
     url: String,
     filename: String,
   },
-  price: {
-    type: Number,
-    required: true,
-    min: [0, "Price cannot be negative"]
-  },
-  location: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  country: {
-    type: String,
-    required: true,
-    trim: true
-  },
+  price: Number,
+  location: String,
+  country: String,
   reviews: [
     {
       type: Schema.Types.ObjectId,
@@ -46,29 +28,62 @@ const listingSchema = new Schema({
   geometry: {
     type: {
       type: String,
-      enum: ["Point"],
-      required: true
+      enum: ['Point'],
+      default: 'Point'
     },
     coordinates: {
       type: [Number],
-      required: true,
+      default: [0, 0]
     }
+  },
+  // NEW: AI-enhanced fields
+  aiGenerated: {
+    description: {
+      type: Boolean,
+      default: false
+    },
+    lastUpdated: Date
+  },
+  aiMetadata: {
+    suggestedPrice: Number,
+    priceConfidence: String,
+    imageTags: [String],
+    imageQualityScore: Number,
+    sentimentScore: Number,
+    reviewSummary: String
+  },
+  amenities: [String],
+  propertyType: {
+    type: String,
+    default: 'accommodation'
   }
-}, { timestamps: true });
+}, {
+  timestamps: true
+});
 
-
-// DELETE ASSOCIATED REVIEWS WHEN A LISTING IS DELETED
-listingSchema.post("findOneAndDelete", async (listing) => {
+// Middleware to delete associated reviews when listing is deleted
+listingSchema.post('findOneAndDelete', async (listing) => {
   if (listing) {
     await Review.deleteMany({ _id: { $in: listing.reviews } });
   }
 });
 
-listingSchema.post("findByIdAndDelete", async (listing) => {
-  if (listing) {
-    await Review.deleteMany({ _id: { $in: listing.reviews } });
-  }
+// Method to update AI metadata
+listingSchema.methods.updateAIMetadata = function(metadata) {
+  this.aiMetadata = { ...this.aiMetadata, ...metadata };
+  return this.save();
+};
+
+// Virtual for review count
+listingSchema.virtual('reviewCount').get(function() {
+  return this.reviews.length;
 });
 
-const Listing = mongoose.model("Listing", listingSchema);
-module.exports = Listing;
+// Virtual for average rating (calculated from reviews)
+listingSchema.virtual('averageRating').get(function() {
+  if (this.reviews.length === 0) return 0;
+  // This will be populated when reviews are fetched
+  return this._averageRating || 0;
+});
+
+module.exports = mongoose.model('Listing', listingSchema);

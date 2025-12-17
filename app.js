@@ -19,6 +19,7 @@ const User = require("./models/user.js");
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
+const aiRouter = require("./routes/ai.js"); // NEW: AI routes
 
 // DB CONNECTION
 const dbUrl = process.env.ATLASDB_URL;
@@ -35,6 +36,7 @@ app.set("views", path.join(__dirname, "views"));
 
 // MIDDLEWARE
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); // NEW: For AI API endpoints
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -83,6 +85,7 @@ app.use((req, res, next) => {
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter);
+app.use("/api/ai", aiRouter); // NEW: AI API routes
 
 // 404 HANDLER
 app.use((req, res, next) => {
@@ -96,6 +99,8 @@ app.use((err, req, res, next) => {
 });
 
 // START SERVER
-app.listen(8080, () => {
-  console.log("Server running on port 8080");
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`AI Provider: ${process.env.AI_PROVIDER || 'not configured'}`);
 });
